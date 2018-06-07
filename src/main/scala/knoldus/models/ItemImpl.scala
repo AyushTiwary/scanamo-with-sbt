@@ -1,18 +1,18 @@
-package knoldus.controller
+package knoldus.models
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model.DeleteItemResult
 import com.gu.scanamo.ScanamoAsync
 import com.gu.scanamo.error.DynamoReadError
 import com.gu.scanamo.query.{KeyEquals, UniqueKey}
 import knoldus.core.{AsyncItemApi, Item}
-import knoldus.models.DynamoDBClient.client
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ItemImpl extends AsyncItemApi {
+class ItemImpl(client: AmazonDynamoDBAsync) extends AsyncItemApi {
 
-  val tableName = "asyncItem"
+  val tableName = "asyncItems"
 
   override def put(item: Item): Future[Option[Either[DynamoReadError, Item]]] =
     ScanamoAsync.put(client)(tableName)(item)

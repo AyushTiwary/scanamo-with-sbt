@@ -1,13 +1,14 @@
-package knoldus.controller
+package knoldus.models.global
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import knoldus.core.{Code, Item}
+import knoldus.models.ItemImpl
 import org.scalatest.AsyncFlatSpec
 
-import scala.concurrent.Future
+class ItemImplSpec extends AsyncFlatSpec{
 
-class ItemImplTest extends AsyncFlatSpec {
-
-  val itemImpl = new ItemImpl
+  val client: AmazonDynamoDBAsync = DynamoDBClient.client
+  val itemImpl = new ItemImpl(client)
 
   it should "put the item" in {
     val id = scala.util.Random.nextInt()

@@ -1,4 +1,4 @@
-package knoldus.models
+package knoldus.models.global
 
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClientBuilder

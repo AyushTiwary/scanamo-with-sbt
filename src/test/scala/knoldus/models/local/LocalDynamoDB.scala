@@ -1,9 +1,10 @@
-package knoldus.models
+package knoldus.models.local
 
 import com.amazonaws.auth.{AWSStaticCredentialsProvider, BasicAWSCredentials}
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 import com.amazonaws.services.dynamodbv2._
 import com.amazonaws.services.dynamodbv2.model._
+
 import scala.collection.JavaConverters._
 
 object LocalDynamoDB {
