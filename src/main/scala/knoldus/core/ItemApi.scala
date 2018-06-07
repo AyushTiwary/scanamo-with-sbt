@@ -9,7 +9,7 @@ case class Code(itemCodes: List[String])
 
 case class Item(id: Long, name: String, code: Code)
 
-trait AsyncItemApi {
+trait ItemApi {
 
   def put(items: Item): Future[Option[Either[DynamoReadError, Item]]]
 
