@@ -24,7 +24,7 @@ object LocalDynamoDB {
   }
 
   def withTable[T](client: AmazonDynamoDB)(tableName: String)(attributeDefinitions: (Symbol, ScalarAttributeType)*)(
-        thunk: => T
+    thunk: => T
   ): T = {
     createTable(client)(tableName)(attributeDefinitions: _*)
     val res = try {
@@ -44,21 +44,21 @@ object LocalDynamoDB {
   }
 
   def withTableWithSecondaryIndex[T](client: AmazonDynamoDB)(tableName: String, secondaryIndexName: String)
-    (primaryIndexAttributes: (Symbol, ScalarAttributeType)*)(secondaryIndexAttributes: (Symbol, ScalarAttributeType)*)(
-    thunk: => T
-  ): T = {
+                                    (primaryIndexAttributes: (Symbol, ScalarAttributeType)*)(secondaryIndexAttributes: (Symbol, ScalarAttributeType)*)(
+                                      thunk: => T
+                                    ): T = {
     client.createTable(
       new CreateTableRequest().withTableName(tableName)
-          .withAttributeDefinitions(attributeDefinitions(
-            primaryIndexAttributes.toList ++ (secondaryIndexAttributes.toList diff primaryIndexAttributes.toList)))
-          .withKeySchema(keySchema(primaryIndexAttributes))
+        .withAttributeDefinitions(attributeDefinitions(
+          primaryIndexAttributes.toList ++ (secondaryIndexAttributes.toList diff primaryIndexAttributes.toList)))
+        .withKeySchema(keySchema(primaryIndexAttributes))
+        .withProvisionedThroughput(arbitraryThroughputThatIsIgnoredByDynamoDBLocal)
+        .withGlobalSecondaryIndexes(new GlobalSecondaryIndex()
+          .withIndexName(secondaryIndexName)
+          .withKeySchema(keySchema(secondaryIndexAttributes))
           .withProvisionedThroughput(arbitraryThroughputThatIsIgnoredByDynamoDBLocal)
-          .withGlobalSecondaryIndexes(new GlobalSecondaryIndex()
-            .withIndexName(secondaryIndexName)
-            .withKeySchema(keySchema(secondaryIndexAttributes))
-            .withProvisionedThroughput(arbitraryThroughputThatIsIgnoredByDynamoDBLocal)
-            .withProjection(new Projection().withProjectionType(ProjectionType.ALL))
-          )
+          .withProjection(new Projection().withProjectionType(ProjectionType.ALL))
+        )
     )
     val res = try {
       thunk
@@ -72,11 +72,11 @@ object LocalDynamoDB {
   private def keySchema(attributes: Seq[(Symbol, ScalarAttributeType)]) = {
     val hashKeyWithType :: rangeKeyWithType = attributes.toList
     val keySchemas = hashKeyWithType._1 -> KeyType.HASH :: rangeKeyWithType.map(_._1 -> KeyType.RANGE)
-    keySchemas.map{ case (symbol, keyType) => new KeySchemaElement(symbol.name, keyType)}.asJava
+    keySchemas.map { case (symbol, keyType) => new KeySchemaElement(symbol.name, keyType) }.asJava
   }
 
   private def attributeDefinitions(attributes: Seq[(Symbol, ScalarAttributeType)]) = {
-    attributes.map{ case (symbol, attributeType) => new AttributeDefinition(symbol.name, attributeType)}.asJava
+    attributes.map { case (symbol, attributeType) => new AttributeDefinition(symbol.name, attributeType) }.asJava
   }
 
   private val arbitraryThroughputThatIsIgnoredByDynamoDBLocal = new ProvisionedThroughput(1L, 1L)

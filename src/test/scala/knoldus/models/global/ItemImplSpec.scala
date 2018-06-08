@@ -1,13 +1,13 @@
 package knoldus.models.global
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
-import knoldus.core.{Code, Item}
+import akka.stream.alpakka.dynamodb.scaladsl.DynamoClient
 import knoldus.models.ItemImpl
+import knoldus.models.core.{Code, Item}
 import org.scalatest.AsyncFlatSpec
 
 class ItemImplSpec extends AsyncFlatSpec{
 
-  val client: AmazonDynamoDBAsync = DynamoDBClient.client
+  val client: DynamoClient = DynamoDBClient.client
   val itemImpl = new ItemImpl(client)
 
   it should "put the item" in {

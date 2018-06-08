@@ -1,10 +1,14 @@
 package knoldus.models.global
 
-import com.amazonaws.regions.Regions
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClientBuilder
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.alpakka.dynamodb.impl.DynamoSettings
+import akka.stream.alpakka.dynamodb.scaladsl.DynamoClient
 
 object DynamoDBClient {
-  val client = AmazonDynamoDBAsyncClientBuilder.standard()
-    .withRegion(Regions.US_EAST_1)
-    .build()
+  implicit val system = ActorSystem("scanamo-alpakka")
+  implicit val materializer = ActorMaterializer()
+
+  val settings = DynamoSettings(system)
+  val client = DynamoClient(settings)
 }

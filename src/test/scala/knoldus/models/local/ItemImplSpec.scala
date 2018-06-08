@@ -1,13 +1,21 @@
 package knoldus.models.local
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
-import knoldus.core.{Code, Item}
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.alpakka.dynamodb.impl.DynamoSettings
+import akka.stream.alpakka.dynamodb.scaladsl.DynamoClient
 import knoldus.models.ItemImpl
+import knoldus.models.core.{Code, Item}
 
 class ItemImplSpec extends TestTrait {
 
-  val client: AmazonDynamoDBAsync = LocalDynamoDB.client()
-  val itemImpl = new ItemImpl(client)
+  implicit val system = ActorSystem("scanamo-alpakka")
+  implicit val materializer = ActorMaterializer()
+
+  val settings = DynamoSettings(system)
+  val alpakkaClient = DynamoClient(settings)
+
+  val itemImpl = new ItemImpl(alpakkaClient)
 
   it should "put the item" in {
     val id = scala.util.Random.nextInt()
